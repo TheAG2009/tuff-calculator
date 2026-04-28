@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Tap & Vibe · Smart Calculator</title>
+    <title>VibeCalc · Quote Generator Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -17,30 +17,27 @@
             </div>
         </div>
         
-        <!-- Phone Frame -->
         <div class="phone-frame">
-            <!-- Status Bar with Real Battery (optional) -->
             <div class="status-bar">
                 <span id="liveTime">9:41</span>
-                <span>📶 🔋 100%</span>
+                <span>📶 🔋</span>
             </div>
             
-            <!-- Guideline Mini Hint (below status bar) -->
-            <div class="guideline-hint" id="guidelineHint">
+            <div class="guideline-hint">
                 <span>➕💪 &nbsp; ➖💕 &nbsp; ➗😂 &nbsp; ✖️⚡ &nbsp; %🤔</span>
                 <button class="hint-icon" id="hintIconBtn">ⓘ</button>
             </div>
             
-            <!-- Quote Card -->
+            <!-- Quote Card - Shows the current quote -->
             <div class="quote-card" id="quoteCard">
                 <div class="quote-icon" id="quoteIcon">💪</div>
                 <div class="quote-text-wrapper">
-                    <div class="quote-label" id="quoteLabel">MOTIVATION</div>
-                    <div class="quote-text" id="quoteText">The harder you work, the luckier you get. Keep going!</div>
+                    <div class="quote-label" id="quoteLabel">READY</div>
+                    <div class="quote-text" id="quoteText">Tap numbers, press = to get a surprise!</div>
                 </div>
             </div>
             
-            <!-- Calculator Display -->
+            <!-- Calculator Display - Will show QUOTES, not numbers! -->
             <div class="calc-display">
                 <input type="text" id="display" readonly value="0" inputmode="none">
             </div>
@@ -76,7 +73,7 @@
         </div>
     </div>
     
-    <!-- Guideline Modal Popup -->
+    <!-- Guideline Modal -->
     <div class="modal" id="guidelineModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -86,30 +83,32 @@
             <div class="modal-body">
                 <div class="rule-item">
                     <span class="rule-op">+</span>
-                    <span class="rule-desc">→ 💪 Motivational Quotes</span>
+                    <span class="rule-desc">→ 💪 Motivational Quote</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">-</span>
-                    <span class="rule-desc">→ 💕 Pick-up Lines</span>
+                    <span class="rule-desc">→ 💕 Pick-up Line</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">÷</span>
-                    <span class="rule-desc">→ 😂 Funny Jokes</span>
+                    <span class="rule-desc">→ 😂 Funny Joke</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">×</span>
-                    <span class="rule-desc">→ ⚡ Fun Tasks (push-ups, stretches, etc.)</span>
+                    <span class="rule-desc">→ ⚡ Fun Task</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">%</span>
-                    <span class="rule-desc">→ 🤔 Deep / Meme Questions</span>
+                    <span class="rule-desc">→ 🤔 Deep Question</span>
                 </div>
                 <div class="rule-separator"></div>
                 <div class="rule-tip">
-                    💡 <strong>Tip:</strong> Press <strong>=</strong> or <strong>Enter</strong> after any calculation to get a fresh quote!
+                    🎯 <strong>How it works:</strong><br>
+                    Type any equation (like 2+2) and press <strong>=</strong><br>
+                    The DISPLAY shows a QUOTE instead of the answer!
                 </div>
                 <div class="rule-tip">
-                    ⌨️ <strong>Keyboard:</strong> Use number keys, + - * /, Enter, Backspace, Esc
+                    ⌨️ <strong>Keyboard:</strong> Use number keys, + - * /, Enter, Backspace
                 </div>
             </div>
         </div>
