@@ -1,6 +1,5 @@
 // ============================================
 // 🎯 QUOTES DATABASE - EASY TO EDIT!
-// Just add your quotes inside the arrays below
 // ============================================
 
 // ➕ ADDITION (+) → MOTIVATIONAL QUOTES
@@ -16,8 +15,7 @@ const motivationQuotes = [
     "🌈 Believe in yourself and you're halfway there!",
     "🏆 Great things never come from comfort zones.",
     "💎 You are capable of amazing things.",
-    "✨ Progress over perfection.",
-    "⭐ Today's you is tomorrow's inspiration."
+    "✨ Progress over perfection."
 ];
 
 // ➖ SUBTRACTION (-) → PICK-UP LINES
@@ -48,7 +46,7 @@ const jokeQuotes = [
     "😂 Why did the equal sign break up? It felt unequal in the relationship."
 ];
 
-// ✖️ MULTIPLICATION (✕) → TASKS
+// ✖️ MULTIPLICATION (×) → TASKS
 const taskQuotes = [
     "🏋️ Do 10 jumping jacks RIGHT NOW!",
     "🧘 Take 5 deep breaths. In... and out...",
@@ -76,14 +74,11 @@ const questionQuotes = [
 ];
 
 // ============================================
-// 🔧 DON'T EDIT BELOW (Advanced logic)
-// ============================================
-
 let lastQuoteMap = {
     '+': null,
     '-': null,
     '÷': null,
-    '✕': null,
+    '×': null,
     '%': null
 };
 
@@ -108,7 +103,7 @@ function getQuoteByOperation(operation) {
         case '+': return getRandomQuoteFromArray(motivationQuotes, '+');
         case '-': return getRandomQuoteFromArray(pickupQuotes, '-');
         case '÷': return getRandomQuoteFromArray(jokeQuotes, '÷');
-        case '✕': return getRandomQuoteFromArray(taskQuotes, '✕');
+        case '×': return getRandomQuoteFromArray(taskQuotes, '×');
         case '%': return getRandomQuoteFromArray(questionQuotes, '%');
         default: return getRandomQuoteFromArray(motivationQuotes, '+');
     }
