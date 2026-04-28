@@ -1,4 +1,4 @@
-// MOBILE QUOTE CALCULATOR - Display shows QUOTES, not numbers!
+// ========== CALCULATOR LOGIC ==========
 
 let currentInput = "0";
 let prevValue = "";
@@ -8,7 +8,7 @@ let resetDisplay = false;
 const displayEl = document.getElementById("display");
 const realTimeEl = document.getElementById("realTime");
 
-// ========== REAL TIME CLOCK ==========
+// Real Time Clock
 function updateRealTime() {
     const now = new Date();
     let hours = now.getHours();
@@ -21,54 +21,32 @@ function updateRealTime() {
 updateRealTime();
 setInterval(updateRealTime, 1000);
 
-// ========== FULLSCREEN (FIXED FOR MOBILE) ==========
+// Fullscreen for mobile
 function enterFullscreen() {
     const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
 }
 
-function exitFullscreen() {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-    }
-}
-
-// Auto-enter fullscreen on mobile when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if on mobile
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-        setTimeout(() => {
-            enterFullscreen();
-        }, 500);
-    }
+    if (isMobile) setTimeout(() => enterFullscreen(), 500);
 });
 
-// ========== MODAL ==========
+// Modal
 const infoBtn = document.getElementById('infoBtn');
 const modal = document.getElementById('guidelineModal');
 const closeModal = document.getElementById('closeModal');
 
-function showModal() { modal.classList.add('show'); }
-function hideModal() { modal.classList.remove('show'); }
+if (infoBtn) infoBtn.onclick = () => modal.classList.add('show');
+if (closeModal) closeModal.onclick = () => modal.classList.remove('show');
+if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('show'); };
 
-if (infoBtn) infoBtn.addEventListener('click', showModal);
-if (closeModal) closeModal.addEventListener('click', hideModal);
-if (modal) modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
-
-// ========== DISPLAY FUNCTIONS ==========
+// Display functions
 function updateDisplay() {
     let val = currentInput;
-    if (val.length > 30) val = val.slice(0, 30) + "...";
     displayEl.value = val;
+    displayEl.scrollTop = displayEl.scrollHeight;
 }
 
 function animateDisplay() {
@@ -121,23 +99,19 @@ function setOperation(op) {
     resetDisplay = true;
 }
 
-// ========== CORE: DISPLAY QUOTE INSTEAD OF ANSWER ==========
+// 🔥 CORE: Show quote instead of answer!
 function showQuoteInsteadOfAnswer() {
+    let quote;
+    
     if (currentOp === null || prevValue === "") {
-        const quoteData = getQuoteByOp('+');
-        displayEl.value = quoteData.text;
-        animateDisplay();
-        return;
+        quote = getQuoteByOperation('+');
+    } else {
+        quote = getQuoteByOperation(currentOp);
     }
     
-    let opForQuote = currentOp;
-    const quoteData = getQuoteByOp(opForQuote);
-    
-    // 🔥 DISPLAY ONLY THE QUOTE - NO NUMBERS!
-    displayEl.value = quoteData.text;
+    displayEl.value = quote;
     animateDisplay();
     
-    // Reset for next calculation
     currentInput = "0";
     prevValue = "";
     currentOp = null;
@@ -146,8 +120,8 @@ function showQuoteInsteadOfAnswer() {
 
 function handlePercent() {
     if (currentInput === "") currentInput = "0";
-    const quoteData = getQuoteByOp('%');
-    displayEl.value = quoteData.text;
+    const quote = getQuoteByOperation('%');
+    displayEl.value = quote;
     animateDisplay();
     currentInput = "0";
     prevValue = "";
@@ -155,80 +129,50 @@ function handlePercent() {
     resetDisplay = true;
 }
 
-// ========== TOUCH OPTIMIZATION ==========
-// Prevent zoom on double tap
-document.addEventListener('touchstart', (e) => {
-    if (e.target.closest('.btn')) {
-        e.preventDefault();
-    }
-}, { passive: false });
-
-// Better touch response
-const buttons = document.querySelectorAll('.btn');
-buttons.forEach(btn => {
-    btn.addEventListener('touchstart', (e) => {
-        btn.style.transform = 'scale(0.94)';
-    }, { passive: true });
-    btn.addEventListener('touchend', (e) => {
-        btn.style.transform = 'scale(1)';
-    });
-    btn.addEventListener('touchcancel', (e) => {
-        btn.style.transform = 'scale(1)';
-    });
+// Touch optimization
+document.querySelectorAll('.btn').forEach(btn => {
+    btn.addEventListener('touchstart', () => { btn.style.transform = 'scale(0.94)'; });
+    btn.addEventListener('touchend', () => { btn.style.transform = 'scale(1)'; });
 });
 
-// ========== KEYBOARD SUPPORT ==========
+// Keyboard support
 window.addEventListener('keydown', (e) => {
     const key = e.key;
-    
-    if (!isNaN(key) && key !== ' ') {
-        appendNumber(key);
-    } else if (key === '.') {
-        appendNumber('.');
-    } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+    if (!isNaN(key) && key !== ' ') appendNumber(key);
+    else if (key === '.') appendNumber('.');
+    else if (key === '+' || key === '-' || key === '*' || key === '/') {
         e.preventDefault();
-        if (key === '*') setOperation('×');
+        if (key === '*') setOperation('✕');
         else if (key === '/') setOperation('÷');
         else setOperation(key);
     } else if (key === 'Enter' || key === '=') {
         e.preventDefault();
         showQuoteInsteadOfAnswer();
-    } else if (key === 'Escape' || key === 'c' || key === 'C') {
-        clearAll();
-    } else if (key === '%') {
+    } else if (key === 'Escape' || key === 'c' || key === 'C') clearAll();
+    else if (key === '%') {
         e.preventDefault();
         handlePercent();
     } else if (key === 'Backspace') {
         e.preventDefault();
-        if (currentInput.length === 1 || currentInput === "0") {
-            currentInput = "0";
-        } else if (currentInput.length > 1) {
-            currentInput = currentInput.slice(0, -1);
-        }
+        if (currentInput.length === 1 || currentInput === "0") currentInput = "0";
+        else if (currentInput.length > 1) currentInput = currentInput.slice(0, -1);
         updateDisplay();
     }
 });
 
-// ========== BUTTON EVENT LISTENERS ==========
+// Button event listeners
 document.querySelectorAll('.num').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const num = btn.getAttribute('data-num');
-        appendNumber(num);
-    });
+    btn.onclick = () => appendNumber(btn.getAttribute('data-num'));
 });
 
 document.querySelectorAll('.operator').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const op = btn.getAttribute('data-op');
-        setOperation(op);
-    });
+    btn.onclick = () => setOperation(btn.getAttribute('data-op'));
 });
 
-document.querySelector('[data-action="clear"]')?.addEventListener('click', clearAll);
-document.querySelector('[data-action="toggleSign"]')?.addEventListener('click', toggleSign);
-document.querySelector('[data-action="percent"]')?.addEventListener('click', handlePercent);
-document.querySelector('[data-action="equals"]')?.addEventListener('click', showQuoteInsteadOfAnswer);
+document.querySelector('[data-action="clear"]').onclick = clearAll;
+document.querySelector('[data-action="toggleSign"]').onclick = toggleSign;
+document.querySelector('[data-action="percent"]').onclick = handlePercent;
+document.querySelector('[data-action="equals"]').onclick = showQuoteInsteadOfAnswer;
 
 // Welcome message
-const welcomeQuote = getQuoteByOp('+');
-displayEl.value = welcomeQuote.text;
+displayEl.value = "✨ Welcome! Type any equation and press = ✨";
