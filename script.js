@@ -1,7 +1,7 @@
-// REAL-TIME CALCULATOR with FIXED FULLSCREEN + LIVE CLOCK
+// QUOTE GENERATOR CALCULATOR - DISPLAY SHOWS QUOTES, NOT NUMBERS!
 
-let currentVal = "0";
-let prevVal = "";
+let currentInput = "0";
+let prevValue = "";
 let currentOp = null;
 let resetDisplay = false;
 
@@ -12,7 +12,7 @@ const quoteIconEl = document.getElementById("quoteIcon");
 const realTimeEl = document.getElementById("realTime");
 const liveTimeEl = document.getElementById("liveTime");
 
-// ========== REAL TIME CLOCK (UPDATES EVERY SECOND) ==========
+// ========== REAL TIME CLOCK ==========
 function updateRealTime() {
     const now = new Date();
     let hours = now.getHours();
@@ -28,161 +28,112 @@ function updateRealTime() {
 updateRealTime();
 setInterval(updateRealTime, 1000);
 
-// ========== FIXED FULLSCREEN FUNCTION ==========
+// ========== FULLSCREEN ==========
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 function toggleFullscreen() {
     const doc = document.documentElement;
-    
     if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        // Enter fullscreen
-        if (doc.requestFullscreen) {
-            doc.requestFullscreen();
-        } else if (doc.webkitRequestFullscreen) {
-            doc.webkitRequestFullscreen();
-        } else if (doc.msRequestFullscreen) {
-            doc.msRequestFullscreen();
-        }
+        if (doc.requestFullscreen) doc.requestFullscreen();
+        else if (doc.webkitRequestFullscreen) doc.webkitRequestFullscreen();
         fullscreenBtn.textContent = '✖';
     } else {
-        // Exit fullscreen
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
         fullscreenBtn.textContent = '⛶';
     }
 }
+if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
 
-if (fullscreenBtn) {
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-}
-
-// Update fullscreen button on change
-document.addEventListener('fullscreenchange', updateFullscreenIcon);
-document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-
-function updateFullscreenIcon() {
-    if (fullscreenBtn) {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            fullscreenBtn.textContent = '✖';
-        } else {
-            fullscreenBtn.textContent = '⛶';
-        }
-    }
-}
-
-// ========== GUIDELINE MODAL (i button) ==========
+// ========== MODAL ==========
 const infoBtn = document.getElementById('infoBtn');
 const hintIconBtn = document.getElementById('hintIconBtn');
 const modal = document.getElementById('guidelineModal');
 const closeModal = document.getElementById('closeModal');
-
-function showModal() {
-    modal.classList.add('show');
-}
-
-function hideModal() {
-    modal.classList.remove('show');
-}
-
+function showModal() { modal.classList.add('show'); }
+function hideModal() { modal.classList.remove('show'); }
 if (infoBtn) infoBtn.addEventListener('click', showModal);
 if (hintIconBtn) hintIconBtn.addEventListener('click', showModal);
 if (closeModal) closeModal.addEventListener('click', hideModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) hideModal(); });
 
-// Close modal when clicking outside
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) hideModal();
-});
-
-// ========== CALCULATOR FUNCTIONS ==========
+// ========== DISPLAY FUNCTIONS (shows equation while typing) ==========
 function updateDisplay() {
-    let val = currentVal;
-    if (val.length > 16) {
-        val = parseFloat(val).toExponential(8);
-    }
+    let val = currentInput;
+    if (val.length > 20) val = val.slice(0, 20) + "...";
     displayEl.value = val;
-}
-
-function setDisplayValue(val) {
-    currentVal = val.toString();
-    updateDisplay();
 }
 
 function appendNumber(num) {
     if (resetDisplay) {
-        currentVal = "";
+        currentInput = "";
         resetDisplay = false;
     }
-    if (num === "." && currentVal.includes(".")) return;
-    if (currentVal === "0" && num !== ".") {
-        currentVal = num;
+    if (num === "." && currentInput.includes(".")) return;
+    if (currentInput === "0" && num !== ".") {
+        currentInput = num;
     } else {
-        currentVal += num;
+        currentInput += num;
     }
     updateDisplay();
 }
 
 function clearAll() {
-    currentVal = "0";
-    prevVal = "";
+    currentInput = "0";
+    prevValue = "";
     currentOp = null;
     resetDisplay = false;
     updateDisplay();
 }
 
-function toggleSign() {
-    let val = parseFloat(currentVal);
-    if (isNaN(val)) val = 0;
-    val = -val;
-    currentVal = val.toString();
-    updateDisplay();
+function setOperation(op) {
+    if (currentInput === "") currentInput = "0";
+    if (prevValue !== "" && currentOp !== null) {
+        // Just update the operation without calculating
+        currentOp = op;
+        resetDisplay = true;
+        return;
+    }
+    prevValue = currentInput;
+    currentOp = op;
+    resetDisplay = true;
 }
 
-function percentOp() {
-    let val = parseFloat(currentVal);
-    if (isNaN(val)) val = 0;
-    val = val / 100;
-    currentVal = val.toString();
-    updateDisplay();
-}
-
-function calculate() {
-    if (currentOp === null || prevVal === "") return null;
-    
-    let a = parseFloat(prevVal);
-    let b = parseFloat(currentVal);
-    
-    if (isNaN(a) || isNaN(b)) return null;
-    
-    let result;
-    switch(currentOp) {
-        case "+": result = a + b; break;
-        case "-": result = a - b; break;
-        case "×": result = a * b; break;
-        case "÷": 
-            if (b === 0) return "Error";
-            result = a / b;
-            break;
-        default: return null;
+// ========== CORE FUNCTION: DISPLAYS QUOTE INSTEAD OF ANSWER ==========
+function showQuoteInsteadOfAnswer() {
+    if (currentOp === null || prevValue === "") {
+        // No operation set, show a default motivational quote
+        const quoteData = getQuoteByOp('+');
+        displayEl.value = `✨ ${quoteData.text} ✨`;
+        updateQuoteCard(quoteData);
+        return;
     }
     
-    return Math.round(result * 1000000) / 1000000;
+    // Get quote based on the operation (+, -, ×, ÷, %)
+    let opForQuote = currentOp;
+    if (opForQuote === '×') opForQuote = '×';
+    if (opForQuote === '÷') opForQuote = '÷';
+    
+    const quoteData = getQuoteByOp(opForQuote);
+    
+    // 🔥 CRITICAL: Display the QUOTE in the calculator display!
+    displayEl.value = `💬 ${quoteData.text}`;
+    
+    // Also update the quote card below
+    updateQuoteCard(quoteData);
+    
+    // Reset for next calculation
+    currentInput = "0";
+    prevValue = "";
+    currentOp = null;
+    resetDisplay = true;
 }
 
-function updateQuoteForOp(op) {
-    if (!op) return;
-    
-    let cleanOp = op;
-    if (cleanOp === '*' || cleanOp === '×') cleanOp = '×';
-    if (cleanOp === '/') cleanOp = '÷';
-    
-    const quoteData = getQuoteByOp(cleanOp);
-    
+function updateQuoteCard(quoteData) {
     quoteTextEl.innerText = quoteData.text;
     quoteLabelEl.innerText = quoteData.label;
     quoteIconEl.innerText = quoteData.icon;
     
+    // Animation
     quoteTextEl.classList.remove('quote-pop');
     quoteTextEl.offsetHeight;
     quoteTextEl.classList.add('quote-pop');
@@ -194,67 +145,26 @@ function updateQuoteForOp(op) {
     }
 }
 
-function handleEquals() {
-    if (currentVal === "Error") {
-        clearAll();
-        return;
-    }
-    
-    if (currentOp === null) {
-        if (currentVal !== "0") {
-            updateQuoteForOp('+');
-        }
-        return;
-    }
-    
-    const result = calculate();
-    
-    if (result === "Error") {
-        setDisplayValue("Error");
-        currentVal = "Error";
-        prevVal = "";
-        currentOp = null;
-        updateQuoteForOp('+');
-        return;
-    }
-    
-    if (result !== null && !isNaN(result)) {
-        setDisplayValue(result);
-        currentVal = result.toString();
-        prevVal = "";
-        
-        if (currentOp) {
-            updateQuoteForOp(currentOp);
-        }
-        
-        currentOp = null;
-        resetDisplay = true;
-    }
-}
-
-function setOperation(op) {
-    if (currentVal === "Error") clearAll();
-    
-    if (currentOp !== null && !resetDisplay) {
-        const result = calculate();
-        if (result !== null && !isNaN(result) && result !== "Error") {
-            currentVal = result.toString();
-            updateDisplay();
-        }
-    }
-    
-    prevVal = currentVal;
-    currentOp = op;
-    resetDisplay = true;
-}
-
-function handlePercentWithQuote() {
-    if (currentVal === "Error") return;
-    percentOp();
-    updateQuoteForOp('%');
-    resetDisplay = true;
-    prevVal = "";
+// Handle % separately - shows deep question
+function handlePercent() {
+    if (currentInput === "") currentInput = "0";
+    const quoteData = getQuoteByOp('%');
+    displayEl.value = `❓ ${quoteData.text}`;
+    updateQuoteCard(quoteData);
+    currentInput = "0";
+    prevValue = "";
     currentOp = null;
+    resetDisplay = true;
+}
+
+function toggleSign() {
+    if (currentInput === "0") return;
+    if (currentInput.startsWith("-")) {
+        currentInput = currentInput.slice(1);
+    } else {
+        currentInput = "-" + currentInput;
+    }
+    updateDisplay();
 }
 
 // ========== KEYBOARD SUPPORT ==========
@@ -272,19 +182,18 @@ window.addEventListener('keydown', (e) => {
         else setOperation(key);
     } else if (key === 'Enter' || key === '=') {
         e.preventDefault();
-        handleEquals();
+        showQuoteInsteadOfAnswer();
     } else if (key === 'Escape' || key === 'c' || key === 'C') {
         clearAll();
     } else if (key === '%') {
         e.preventDefault();
-        handlePercentWithQuote();
+        handlePercent();
     } else if (key === 'Backspace') {
         e.preventDefault();
-        if (currentVal.length === 1 || currentVal === "Error") {
-            currentVal = "0";
-        } else {
-            currentVal = currentVal.slice(0, -1);
-            if (currentVal === "") currentVal = "0";
+        if (currentInput.length === 1 || currentInput === "0") {
+            currentInput = "0";
+        } else if (currentInput.length > 1) {
+            currentInput = currentInput.slice(0, -1);
         }
         updateDisplay();
     }
@@ -307,10 +216,12 @@ document.querySelectorAll('.operator').forEach(btn => {
 
 document.querySelector('[data-action="clear"]')?.addEventListener('click', clearAll);
 document.querySelector('[data-action="toggleSign"]')?.addEventListener('click', toggleSign);
-document.querySelector('[data-action="percent"]')?.addEventListener('click', handlePercentWithQuote);
-document.querySelector('[data-action="equals"]')?.addEventListener('click', handleEquals);
+document.querySelector('[data-action="percent"]')?.addEventListener('click', handlePercent);
+document.querySelector('[data-action="equals"]')?.addEventListener('click', showQuoteInsteadOfAnswer);
 
-// Welcome quote
+// Welcome message
 setTimeout(() => {
-    updateQuoteForOp('+');
+    const welcomeQuote = getQuoteByOp('+');
+    displayEl.value = `✨ ${welcomeQuote.text} ✨`;
+    updateQuoteCard(welcomeQuote);
 }, 100);
