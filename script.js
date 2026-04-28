@@ -1,192 +1,198 @@
-// iOS Calculator Logic with Operation-Based Quotes
+// REAL-TIME CALCULATOR with QUOTE UPDATES (NO ANSWER TEXT, JUST QUOTES)
 
-let currentInput = "0";
-let previousInput = "";
-let currentOperation = null;
-let shouldResetDisplay = false;
+let currentVal = "0";
+let prevVal = "";
+let currentOp = null;
+let resetDisplay = false;
 
-const displayElem = document.getElementById("display");
-const quoteTextElem = document.getElementById("quoteText");
-const quoteTypeBadge = document.getElementById("quoteTypeBadge");
-const quoteIconSpan = document.getElementById("quoteIcon");
+const displayEl = document.getElementById("display");
+const quoteTextEl = document.getElementById("quoteText");
+const quoteLabelEl = document.getElementById("quoteLabel");
+const quoteIconEl = document.getElementById("quoteIcon");
 
 function updateDisplay() {
-    let raw = currentInput;
-    if (raw.length > 16) {
-        raw = parseFloat(raw).toExponential(8);
+    let val = currentVal;
+    if (val.length > 16) {
+        val = parseFloat(val).toExponential(8);
     }
-    displayElem.value = raw;
+    displayEl.value = val;
 }
 
-function setDisplayValue(value) {
-    currentInput = value.toString();
+function setDisplayValue(val) {
+    currentVal = val.toString();
     updateDisplay();
 }
 
-function appendNumber(number) {
-    if (shouldResetDisplay) {
-        currentInput = "";
-        shouldResetDisplay = false;
+function appendNumber(num) {
+    if (resetDisplay) {
+        currentVal = "";
+        resetDisplay = false;
     }
-    if (number === "." && currentInput.includes(".")) return;
-    if (currentInput === "0" && number !== ".") {
-        currentInput = number;
+    if (num === "." && currentVal.includes(".")) return;
+    if (currentVal === "0" && num !== ".") {
+        currentVal = num;
     } else {
-        currentInput += number;
+        currentVal += num;
     }
     updateDisplay();
 }
 
 function clearAll() {
-    currentInput = "0";
-    previousInput = "";
-    currentOperation = null;
-    shouldResetDisplay = false;
+    currentVal = "0";
+    prevVal = "";
+    currentOp = null;
+    resetDisplay = false;
     updateDisplay();
 }
 
 function toggleSign() {
-    let val = parseFloat(currentInput);
+    let val = parseFloat(currentVal);
     if (isNaN(val)) val = 0;
     val = -val;
-    currentInput = val.toString();
+    currentVal = val.toString();
     updateDisplay();
 }
 
-function percentOperation() {
-    let val = parseFloat(currentInput);
+function percentOp() {
+    let val = parseFloat(currentVal);
     if (isNaN(val)) val = 0;
     val = val / 100;
-    currentInput = val.toString();
+    currentVal = val.toString();
     updateDisplay();
 }
 
-function performCalculation() {
-    if (currentOperation === null || previousInput === "") return null;
+function calculate() {
+    if (currentOp === null || prevVal === "") return null;
     
-    let a = parseFloat(previousInput);
-    let b = parseFloat(currentInput);
+    let a = parseFloat(prevVal);
+    let b = parseFloat(currentVal);
     
     if (isNaN(a) || isNaN(b)) return null;
     
     let result;
-    switch (currentOperation) {
-        case "+":
-            result = a + b;
-            break;
-        case "-":
-            result = a - b;
-            break;
-        case "×":
-            result = a * b;
-            break;
-        case "÷":
+    switch(currentOp) {
+        case "+": result = a + b; break;
+        case "-": result = a - b; break;
+        case "×": result = a * b; break;
+        case "÷": 
             if (b === 0) return "Error";
             result = a / b;
             break;
-        default:
-            return null;
+        default: return null;
     }
     
     return Math.round(result * 1000000) / 1000000;
 }
 
-// Animated quote update
-function animateQuote() {
-    const quoteContainer = document.getElementById("quoteText");
-    quoteContainer.style.animation = 'none';
-    quoteContainer.offsetHeight; // Force reflow
-    quoteContainer.style.animation = 'quotePop 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards';
+// Quote update with animation (ONLY QUOTES, NO ANSWERS)
+function updateQuoteForOp(op) {
+    if (!op) return;
+    
+    let cleanOp = op;
+    if (cleanOp === '*' || cleanOp === '×') cleanOp = '×';
+    if (cleanOp === '/') cleanOp = '÷';
+    
+    const quoteData = getQuoteByOp(cleanOp);
+    
+    quoteTextEl.innerText = quoteData.text;
+    quoteLabelEl.innerText = quoteData.label;
+    quoteIconEl.innerText = quoteData.icon;
+    
+    // Animation
+    quoteTextEl.classList.remove('quote-pop');
+    quoteTextEl.offsetHeight;
+    quoteTextEl.classList.add('quote-pop');
     
     const card = document.querySelector('.quote-card');
     card.style.transform = 'scale(0.99)';
     setTimeout(() => { card.style.transform = 'scale(1)'; }, 120);
 }
 
-function refreshQuoteBasedOnOperator(opSymbol) {
-    if (!opSymbol) return;
-    
-    let validOp = opSymbol;
-    if (validOp === '*' || validOp === '×') validOp = '×';
-    if (validOp === '/') validOp = '÷';
-    
-    const content = getContentByOperation(validOp);
-    
-    quoteTextElem.innerText = content.text;
-    quoteTypeBadge.innerText = `${content.type} 🎯`;
-    quoteIconSpan.innerHTML = content.icon;
-    
-    animateQuote();
-}
-
-function evaluateAndUpdateQuote() {
-    if (currentOperation === null) {
-        refreshQuoteBasedOnOperator('+');
+function handleEquals() {
+    if (currentVal === "Error") {
+        clearAll();
         return;
     }
     
-    const result = performCalculation();
+    if (currentOp === null) {
+        if (currentVal !== "0") {
+            updateQuoteForOp('+');
+        }
+        return;
+    }
+    
+    const result = calculate();
     
     if (result === "Error") {
         setDisplayValue("Error");
-        currentInput = "Error";
-        previousInput = "";
-        currentOperation = null;
-        refreshQuoteBasedOnOperator('+');
+        currentVal = "Error";
+        prevVal = "";
+        currentOp = null;
+        updateQuoteForOp('+');
         return;
     }
     
     if (result !== null && !isNaN(result)) {
         setDisplayValue(result);
-        currentInput = result.toString();
-        previousInput = "";
+        currentVal = result.toString();
+        prevVal = "";
         
-        // 🔥 CRITICAL: Show quote based on the operation used
-        if (currentOperation) {
-            refreshQuoteBasedOnOperator(currentOperation);
+        // 🔥 SHOW QUOTE BASED ON THE OPERATION (NO ANSWER TEXT)
+        if (currentOp) {
+            updateQuoteForOp(currentOp);
         }
         
-        currentOperation = null;
-        shouldResetDisplay = true;
-    } else {
-        refreshQuoteBasedOnOperator('+');
+        currentOp = null;
+        resetDisplay = true;
     }
 }
 
 function setOperation(op) {
-    if (currentInput === "Error") clearAll();
+    if (currentVal === "Error") clearAll();
     
-    if (currentOperation !== null && !shouldResetDisplay) {
-        const result = performCalculation();
+    if (currentOp !== null && !resetDisplay) {
+        const result = calculate();
         if (result !== null && !isNaN(result) && result !== "Error") {
-            currentInput = result.toString();
+            currentVal = result.toString();
             updateDisplay();
         }
     }
     
-    previousInput = currentInput;
-    currentOperation = op;
-    shouldResetDisplay = true;
+    prevVal = currentVal;
+    currentOp = op;
+    resetDisplay = true;
 }
 
-function handleEquals() {
-    if (currentInput === "Error") {
-        clearAll();
-        return;
+function handlePercentWithQuote() {
+    if (currentVal === "Error") return;
+    percentOp();
+    updateQuoteForOp('%');
+    resetDisplay = true;
+    prevVal = "";
+    currentOp = null;
+}
+
+// ========== FULLSCREEN TOGGLE ==========
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+        fullscreenBtn.textContent = '✖';
+    } else {
+        document.exitFullscreen();
+        fullscreenBtn.textContent = '⛶';
     }
-    evaluateAndUpdateQuote();
 }
+fullscreenBtn.addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+        fullscreenBtn.textContent = '✖';
+    } else {
+        fullscreenBtn.textContent = '⛶';
+    }
+});
 
-function handlePercentAndQuote() {
-    if (currentInput === "Error") return;
-    percentOperation();
-    refreshQuoteBasedOnOperator('%');
-    shouldResetDisplay = true;
-    previousInput = "";
-    currentOperation = null;
-}
-
-// Keyboard Support
+// ========== KEYBOARD SUPPORT ==========
 window.addEventListener('keydown', (e) => {
     const key = e.key;
     
@@ -206,21 +212,21 @@ window.addEventListener('keydown', (e) => {
         clearAll();
     } else if (key === '%') {
         e.preventDefault();
-        handlePercentAndQuote();
+        handlePercentWithQuote();
     } else if (key === 'Backspace') {
         e.preventDefault();
-        if (currentInput.length === 1 || currentInput === "Error") {
-            currentInput = "0";
+        if (currentVal.length === 1 || currentVal === "Error") {
+            currentVal = "0";
         } else {
-            currentInput = currentInput.slice(0, -1);
-            if (currentInput === "") currentInput = "0";
+            currentVal = currentVal.slice(0, -1);
+            if (currentVal === "") currentVal = "0";
         }
         updateDisplay();
     }
 });
 
-// Button Event Listeners
-document.querySelectorAll('.number').forEach(btn => {
+// ========== BUTTON EVENT LISTENERS ==========
+document.querySelectorAll('.num').forEach(btn => {
     btn.addEventListener('click', () => {
         const num = btn.getAttribute('data-num');
         appendNumber(num);
@@ -236,10 +242,10 @@ document.querySelectorAll('.operator').forEach(btn => {
 
 document.querySelector('[data-action="clear"]').addEventListener('click', clearAll);
 document.querySelector('[data-action="toggleSign"]').addEventListener('click', toggleSign);
-document.querySelector('[data-action="percent"]').addEventListener('click', handlePercentAndQuote);
+document.querySelector('[data-action="percent"]').addEventListener('click', handlePercentWithQuote);
 document.querySelector('[data-action="equals"]').addEventListener('click', handleEquals);
 
 // Welcome quote on load
 setTimeout(() => {
-    refreshQuoteBasedOnOperator('+');
+    updateQuoteForOp('+');
 }, 100);
