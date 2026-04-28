@@ -37,6 +37,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 8px 0 16px 0;
+            flex-shrink: 0;
         }
 
         .real-time {
@@ -66,18 +67,26 @@
             transform: scale(0.94);
         }
 
-        /* Display Container */
+        /* Display Container - FIXED to show full quotes */
         .display-container {
             flex: 1;
             display: flex;
-            align-items: flex-end;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 20px;
+            min-height: 0;
         }
 
         .calc-display {
             width: 100%;
             text-align: center;
-            padding: 20px 0;
+            padding: 10px;
+            background: rgba(20,20,25,0.5);
+            border-radius: 28px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #display {
@@ -85,16 +94,19 @@
             background: transparent;
             border: none;
             color: white;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 500;
             font-family: inherit;
             text-align: center;
-            padding: 16px;
+            padding: 20px 16px;
             outline: none;
-            line-height: 1.4;
+            line-height: 1.45;
             word-wrap: break-word;
+            word-break: break-word;
             white-space: normal;
-            min-height: 100px;
+            overflow-y: auto;
+            max-height: 200px;
+            display: block;
         }
 
         /* Button Grid */
@@ -103,13 +115,14 @@
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
             margin-top: 8px;
+            flex-shrink: 0;
         }
 
         .btn {
             border: none;
             border-radius: 60px;
-            padding: 22px 0;
-            font-size: 36px;
+            padding: 20px 0;
+            font-size: 34px;
             font-weight: 400;
             font-family: inherit;
             transition: 0.05s linear;
@@ -129,18 +142,23 @@
 
         .operator {
             background: #ff9f0a;
-            font-size: 42px;
+            font-size: 40px;
             font-weight: 500;
+        }
+
+        .operator[data-op="×"] {
+            font-size: 38px;
+            font-weight: 600;
         }
 
         .func {
             background: #50505c;
-            font-size: 30px;
+            font-size: 28px;
         }
 
         .equal {
             background: #ff9f0a;
-            font-size: 36px;
+            font-size: 34px;
         }
 
         .zero {
@@ -154,7 +172,8 @@
             height: 5px;
             background: #3a3a3e;
             border-radius: 100px;
-            margin: 20px auto 8px auto;
+            margin: 16px auto 6px auto;
+            flex-shrink: 0;
         }
 
         /* Modal */
@@ -248,7 +267,7 @@
 
         .rule-desc {
             color: #e5e5e5;
-            font-size: 16px;
+            font-size: 15px;
             flex: 1;
         }
 
@@ -263,7 +282,7 @@
             padding: 14px;
             border-radius: 18px;
             color: #ffcc80;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 12px;
             line-height: 1.5;
         }
@@ -283,11 +302,39 @@
             }
         }
 
-        @media (orientation: landscape) and (max-height: 500px) {
+        /* Scrollbar for long quotes */
+        #display::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        #display::-webkit-scrollbar-track {
+            background: #222;
+            border-radius: 10px;
+        }
+
+        #display::-webkit-scrollbar-thumb {
+            background: #ff9f0a;
+            border-radius: 10px;
+        }
+
+        /* Landscape mode */
+        @media (orientation: landscape) and (max-height: 550px) {
             .app { padding: 8px 16px; }
             .btn { padding: 12px 0; font-size: 28px; }
-            #display { font-size: 22px; min-height: 60px; }
+            .operator { font-size: 32px; }
+            .func { font-size: 24px; }
+            #display { font-size: 18px; padding: 12px; }
+            .calc-display { min-height: 90px; }
             .display-container { margin-bottom: 8px; }
+            .home-indicator { margin: 8px auto; }
+        }
+
+        /* Small phones (iPhone SE, etc.) */
+        @media (max-height: 650px) {
+            .btn { padding: 16px 0; font-size: 30px; }
+            .operator { font-size: 36px; }
+            .calc-display { min-height: 110px; }
+            #display { font-size: 19px; }
         }
     </style>
 </head>
@@ -313,7 +360,7 @@
             <button class="btn num" data-num="7">7</button>
             <button class="btn num" data-num="8">8</button>
             <button class="btn num" data-num="9">9</button>
-            <button class="btn operator" data-op="×">×</button>
+            <button class="btn operator" data-op="×">✕</button>
             
             <button class="btn num" data-num="4">4</button>
             <button class="btn num" data-num="5">5</button>
@@ -353,7 +400,7 @@
                     <span class="rule-desc">→ Funny Joke</span>
                 </div>
                 <div class="rule-item">
-                    <span class="rule-op">×</span>
+                    <span class="rule-op">✕</span>
                     <span class="rule-desc">→ Fun Task</span>
                 </div>
                 <div class="rule-item">
@@ -370,9 +417,8 @@
     </div>
 
     <script>
-        // ========== QUOTES DATABASE (ALL IN ONE FILE) ==========
+        // ========== QUOTES DATABASE ==========
         
-        // ➕ ADDITION (+) → MOTIVATIONAL QUOTES
         const motivationQuotes = [
             "✨ The harder you work, the luckier you get. Keep going!",
             "💪 You don't have to be perfect to be amazing.",
@@ -386,12 +432,9 @@
             "🏆 Great things never come from comfort zones.",
             "💎 You are capable of amazing things.",
             "✨ Progress over perfection.",
-            "⭐ Today's you is tomorrow's inspiration.",
-            "💫 The secret of getting ahead is getting started.",
-            "🌟 Success is the sum of small efforts repeated daily."
+            "⭐ Today's you is tomorrow's inspiration."
         ];
 
-        // ➖ SUBTRACTION (-) → PICK-UP LINES
         const pickupQuotes = [
             "💕 Are you a minus sign? You take my breath away.",
             "💖 You + Me = Perfect Equation.",
@@ -405,7 +448,6 @@
             "😘 Do you have a name? Or can I call you mine?"
         ];
 
-        // ➗ DIVISION (÷) → FUNNY JOKES
         const jokeQuotes = [
             "😂 Why was the math book sad? It had too many problems.",
             "🤣 What do you call a number that can't keep still? A roamin' numeral!",
@@ -419,7 +461,6 @@
             "😂 Why did the equal sign break up? It felt unequal in the relationship."
         ];
 
-        // ✖️ MULTIPLICATION (×) → TASKS
         const taskQuotes = [
             "🏋️ Do 10 jumping jacks RIGHT NOW!",
             "🧘 Take 5 deep breaths. In... and out...",
@@ -433,7 +474,6 @@
             "🙏 Say one nice thing about yourself right now!"
         ];
 
-        // ❓ PERCENTAGE (%) → DEEP QUESTIONS
         const questionQuotes = [
             "🤔 If you're 10% smarter today than yesterday, what did you learn?",
             "🧐 What's one belief you held that turned out to be wrong?",
@@ -446,12 +486,11 @@
             "🤯 If life gave you 50% off coupon for anything, what would you buy?"
         ];
 
-        // Track last used quotes to avoid repeats
         let lastQuoteMap = {
             '+': null,
             '-': null,
             '÷': null,
-            '×': null,
+            '✕': null,
             '%': null
         };
 
@@ -473,18 +512,12 @@
 
         function getQuoteByOperation(operation) {
             switch(operation) {
-                case '+':
-                    return getRandomQuoteFromArray(motivationQuotes, '+');
-                case '-':
-                    return getRandomQuoteFromArray(pickupQuotes, '-');
-                case '÷':
-                    return getRandomQuoteFromArray(jokeQuotes, '÷');
-                case '×':
-                    return getRandomQuoteFromArray(taskQuotes, '×');
-                case '%':
-                    return getRandomQuoteFromArray(questionQuotes, '%');
-                default:
-                    return getRandomQuoteFromArray(motivationQuotes, '+');
+                case '+': return getRandomQuoteFromArray(motivationQuotes, '+');
+                case '-': return getRandomQuoteFromArray(pickupQuotes, '-');
+                case '÷': return getRandomQuoteFromArray(jokeQuotes, '÷');
+                case '✕': return getRandomQuoteFromArray(taskQuotes, '✕');
+                case '%': return getRandomQuoteFromArray(questionQuotes, '%');
+                default: return getRandomQuoteFromArray(motivationQuotes, '+');
             }
         }
 
@@ -498,7 +531,6 @@
         const displayEl = document.getElementById("display");
         const realTimeEl = document.getElementById("realTime");
 
-        // Real Time Clock
         function updateRealTime() {
             const now = new Date();
             let hours = now.getHours();
@@ -511,7 +543,6 @@
         updateRealTime();
         setInterval(updateRealTime, 1000);
 
-        // Fullscreen for mobile
         function enterFullscreen() {
             const elem = document.documentElement;
             if (elem.requestFullscreen) elem.requestFullscreen();
@@ -523,7 +554,6 @@
             if (isMobile) setTimeout(() => enterFullscreen(), 500);
         });
 
-        // Modal
         const infoBtn = document.getElementById('infoBtn');
         const modal = document.getElementById('guidelineModal');
         const closeModal = document.getElementById('closeModal');
@@ -532,11 +562,11 @@
         if (closeModal) closeModal.onclick = () => modal.classList.remove('show');
         if (modal) modal.onclick = (e) => { if (e.target === modal) modal.classList.remove('show'); };
 
-        // Display functions
         function updateDisplay() {
             let val = currentInput;
-            if (val.length > 30) val = val.slice(0, 30) + "...";
             displayEl.value = val;
+            // Auto-scroll to bottom if content overflows
+            displayEl.scrollTop = displayEl.scrollHeight;
         }
 
         function animateDisplay() {
@@ -589,7 +619,6 @@
             resetDisplay = true;
         }
 
-        // 🔥 CORE FUNCTION: Show quote instead of answer!
         function showQuoteInsteadOfAnswer() {
             let quote;
             
@@ -599,11 +628,9 @@
                 quote = getQuoteByOperation(currentOp);
             }
             
-            // Display the quote
             displayEl.value = quote;
             animateDisplay();
             
-            // Reset for next calculation
             currentInput = "0";
             prevValue = "";
             currentOp = null;
@@ -621,20 +648,18 @@
             resetDisplay = true;
         }
 
-        // Touch optimization
         document.querySelectorAll('.btn').forEach(btn => {
             btn.addEventListener('touchstart', () => { btn.style.transform = 'scale(0.94)'; });
             btn.addEventListener('touchend', () => { btn.style.transform = 'scale(1)'; });
         });
 
-        // Keyboard support
         window.addEventListener('keydown', (e) => {
             const key = e.key;
             if (!isNaN(key) && key !== ' ') appendNumber(key);
             else if (key === '.') appendNumber('.');
             else if (key === '+' || key === '-' || key === '*' || key === '/') {
                 e.preventDefault();
-                if (key === '*') setOperation('×');
+                if (key === '*') setOperation('✕');
                 else if (key === '/') setOperation('÷');
                 else setOperation(key);
             } else if (key === 'Enter' || key === '=') {
@@ -652,7 +677,6 @@
             }
         });
 
-        // Button event listeners
         document.querySelectorAll('.num').forEach(btn => {
             btn.onclick = () => appendNumber(btn.getAttribute('data-num'));
         });
@@ -666,7 +690,6 @@
         document.querySelector('[data-action="percent"]').onclick = handlePercent;
         document.querySelector('[data-action="equals"]').onclick = showQuoteInsteadOfAnswer;
 
-        // Welcome message
         displayEl.value = "✨ Welcome! Type any equation and press = ✨";
     </script>
 </body>
