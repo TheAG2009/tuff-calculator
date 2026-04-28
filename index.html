@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>VibeCalc · Quote Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Fullscreen Toggle Button - TOP RIGHT CORNER -->
+    <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+    
     <div class="app">
         <div class="top-bar">
             <div class="real-time" id="realTime">--:--</div>
@@ -16,7 +20,8 @@
         
         <div class="display-container">
             <div class="calc-display">
-                <input type="text" id="display" readonly value="0" inputmode="none">
+                <div class="equation-preview" id="equationPreview"></div>
+                <input type="text" id="display" readonly value="✨ Welcome! Press = for quotes ✨" inputmode="none">
             </div>
         </div>
         
@@ -29,7 +34,7 @@
             <button class="btn num" data-num="7">7</button>
             <button class="btn num" data-num="8">8</button>
             <button class="btn num" data-num="9">9</button>
-            <button class="btn operator" data-op="×">✕</button>
+            <button class="btn operator" data-op="×">×</button>
             
             <button class="btn num" data-num="4">4</button>
             <button class="btn num" data-num="5">5</button>
@@ -69,7 +74,7 @@
                     <span class="rule-desc">→ Funny Joke</span>
                 </div>
                 <div class="rule-item">
-                    <span class="rule-op">✕</span>
+                    <span class="rule-op">×</span>
                     <span class="rule-desc">→ Fun Task</span>
                 </div>
                 <div class="rule-item">
@@ -78,8 +83,11 @@
                 </div>
                 <div class="rule-separator"></div>
                 <div class="rule-tip">
-                    🎯 Type any equation (like 2+2) and press <strong>=</strong><br>
-                    The display shows a QUOTE instead of the number!
+                    🎯 Type equation and press <strong>=</strong><br>
+                    Display shows a QUOTE instead of number!
+                </div>
+                <div class="rule-tip">
+                    🔲 Tap <strong>⛶</strong> for fullscreen mode
                 </div>
             </div>
         </div>
