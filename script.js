@@ -1,4 +1,4 @@
-// REAL-TIME CALCULATOR with QUOTE UPDATES (NO ANSWER TEXT, JUST QUOTES)
+// REAL-TIME CALCULATOR with FIXED FULLSCREEN + LIVE CLOCK
 
 let currentVal = "0";
 let prevVal = "";
@@ -9,7 +9,93 @@ const displayEl = document.getElementById("display");
 const quoteTextEl = document.getElementById("quoteText");
 const quoteLabelEl = document.getElementById("quoteLabel");
 const quoteIconEl = document.getElementById("quoteIcon");
+const realTimeEl = document.getElementById("realTime");
+const liveTimeEl = document.getElementById("liveTime");
 
+// ========== REAL TIME CLOCK (UPDATES EVERY SECOND) ==========
+function updateRealTime() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12;
+    const timeString = `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    const shortTime = `${hours}:${minutes.toString().padStart(2, '0')}`;
+    
+    if (realTimeEl) realTimeEl.textContent = timeString;
+    if (liveTimeEl) liveTimeEl.textContent = shortTime;
+}
+updateRealTime();
+setInterval(updateRealTime, 1000);
+
+// ========== FIXED FULLSCREEN FUNCTION ==========
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+function toggleFullscreen() {
+    const doc = document.documentElement;
+    
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        // Enter fullscreen
+        if (doc.requestFullscreen) {
+            doc.requestFullscreen();
+        } else if (doc.webkitRequestFullscreen) {
+            doc.webkitRequestFullscreen();
+        } else if (doc.msRequestFullscreen) {
+            doc.msRequestFullscreen();
+        }
+        fullscreenBtn.textContent = '✖';
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+        fullscreenBtn.textContent = '⛶';
+    }
+}
+
+if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+}
+
+// Update fullscreen button on change
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+function updateFullscreenIcon() {
+    if (fullscreenBtn) {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            fullscreenBtn.textContent = '✖';
+        } else {
+            fullscreenBtn.textContent = '⛶';
+        }
+    }
+}
+
+// ========== GUIDELINE MODAL (i button) ==========
+const infoBtn = document.getElementById('infoBtn');
+const hintIconBtn = document.getElementById('hintIconBtn');
+const modal = document.getElementById('guidelineModal');
+const closeModal = document.getElementById('closeModal');
+
+function showModal() {
+    modal.classList.add('show');
+}
+
+function hideModal() {
+    modal.classList.remove('show');
+}
+
+if (infoBtn) infoBtn.addEventListener('click', showModal);
+if (hintIconBtn) hintIconBtn.addEventListener('click', showModal);
+if (closeModal) closeModal.addEventListener('click', hideModal);
+
+// Close modal when clicking outside
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) hideModal();
+});
+
+// ========== CALCULATOR FUNCTIONS ==========
 function updateDisplay() {
     let val = currentVal;
     if (val.length > 16) {
@@ -84,7 +170,6 @@ function calculate() {
     return Math.round(result * 1000000) / 1000000;
 }
 
-// Quote update with animation (ONLY QUOTES, NO ANSWERS)
 function updateQuoteForOp(op) {
     if (!op) return;
     
@@ -98,14 +183,15 @@ function updateQuoteForOp(op) {
     quoteLabelEl.innerText = quoteData.label;
     quoteIconEl.innerText = quoteData.icon;
     
-    // Animation
     quoteTextEl.classList.remove('quote-pop');
     quoteTextEl.offsetHeight;
     quoteTextEl.classList.add('quote-pop');
     
     const card = document.querySelector('.quote-card');
-    card.style.transform = 'scale(0.99)';
-    setTimeout(() => { card.style.transform = 'scale(1)'; }, 120);
+    if (card) {
+        card.style.transform = 'scale(0.99)';
+        setTimeout(() => { card.style.transform = 'scale(1)'; }, 120);
+    }
 }
 
 function handleEquals() {
@@ -137,7 +223,6 @@ function handleEquals() {
         currentVal = result.toString();
         prevVal = "";
         
-        // 🔥 SHOW QUOTE BASED ON THE OPERATION (NO ANSWER TEXT)
         if (currentOp) {
             updateQuoteForOp(currentOp);
         }
@@ -171,26 +256,6 @@ function handlePercentWithQuote() {
     prevVal = "";
     currentOp = null;
 }
-
-// ========== FULLSCREEN TOGGLE ==========
-const fullscreenBtn = document.getElementById('fullscreenBtn');
-function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-        fullscreenBtn.textContent = '✖';
-    } else {
-        document.exitFullscreen();
-        fullscreenBtn.textContent = '⛶';
-    }
-}
-fullscreenBtn.addEventListener('click', toggleFullscreen);
-document.addEventListener('fullscreenchange', () => {
-    if (document.fullscreenElement) {
-        fullscreenBtn.textContent = '✖';
-    } else {
-        fullscreenBtn.textContent = '⛶';
-    }
-});
 
 // ========== KEYBOARD SUPPORT ==========
 window.addEventListener('keydown', (e) => {
@@ -240,12 +305,12 @@ document.querySelectorAll('.operator').forEach(btn => {
     });
 });
 
-document.querySelector('[data-action="clear"]').addEventListener('click', clearAll);
-document.querySelector('[data-action="toggleSign"]').addEventListener('click', toggleSign);
-document.querySelector('[data-action="percent"]').addEventListener('click', handlePercentWithQuote);
-document.querySelector('[data-action="equals"]').addEventListener('click', handleEquals);
+document.querySelector('[data-action="clear"]')?.addEventListener('click', clearAll);
+document.querySelector('[data-action="toggleSign"]')?.addEventListener('click', toggleSign);
+document.querySelector('[data-action="percent"]')?.addEventListener('click', handlePercentWithQuote);
+document.querySelector('[data-action="equals"]')?.addEventListener('click', handleEquals);
 
-// Welcome quote on load
+// Welcome quote
 setTimeout(() => {
     updateQuoteForOp('+');
 }, 100);
