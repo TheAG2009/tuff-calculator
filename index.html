@@ -3,22 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Tap & Vibe · Calculator</title>
+    <title>Tap & Vibe · Smart Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Fullscreen Toggle Button -->
-        <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+        <!-- Top Bar with Real Time & Info -->
+        <div class="top-bar">
+            <div class="real-time" id="realTime">--:--</div>
+            <div class="top-buttons">
+                <button class="info-btn" id="infoBtn">ⓘ</button>
+                <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+            </div>
+        </div>
         
-        <!-- Phone Frame (optional, can be removed) -->
+        <!-- Phone Frame -->
         <div class="phone-frame">
+            <!-- Status Bar with Real Battery (optional) -->
             <div class="status-bar">
-                <span>9:41</span>
-                <span>📶 🔋</span>
+                <span id="liveTime">9:41</span>
+                <span>📶 🔋 100%</span>
             </div>
             
-            <!-- Quote Card (Only quotes, no answers) -->
+            <!-- Guideline Mini Hint (below status bar) -->
+            <div class="guideline-hint" id="guidelineHint">
+                <span>➕💪 &nbsp; ➖💕 &nbsp; ➗😂 &nbsp; ✖️⚡ &nbsp; %🤔</span>
+                <button class="hint-icon" id="hintIconBtn">ⓘ</button>
+            </div>
+            
+            <!-- Quote Card -->
             <div class="quote-card" id="quoteCard">
                 <div class="quote-icon" id="quoteIcon">💪</div>
                 <div class="quote-text-wrapper">
@@ -32,7 +45,7 @@
                 <input type="text" id="display" readonly value="0" inputmode="none">
             </div>
             
-            <!-- Button Grid (iOS style) -->
+            <!-- Button Grid -->
             <div class="buttons-grid">
                 <button class="btn func" data-action="clear">AC</button>
                 <button class="btn func" data-action="toggleSign">+/−</button>
@@ -60,6 +73,45 @@
             </div>
             
             <div class="home-bar"></div>
+        </div>
+    </div>
+    
+    <!-- Guideline Modal Popup -->
+    <div class="modal" id="guidelineModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📖 How It Works</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="rule-item">
+                    <span class="rule-op">+</span>
+                    <span class="rule-desc">→ 💪 Motivational Quotes</span>
+                </div>
+                <div class="rule-item">
+                    <span class="rule-op">-</span>
+                    <span class="rule-desc">→ 💕 Pick-up Lines</span>
+                </div>
+                <div class="rule-item">
+                    <span class="rule-op">÷</span>
+                    <span class="rule-desc">→ 😂 Funny Jokes</span>
+                </div>
+                <div class="rule-item">
+                    <span class="rule-op">×</span>
+                    <span class="rule-desc">→ ⚡ Fun Tasks (push-ups, stretches, etc.)</span>
+                </div>
+                <div class="rule-item">
+                    <span class="rule-op">%</span>
+                    <span class="rule-desc">→ 🤔 Deep / Meme Questions</span>
+                </div>
+                <div class="rule-separator"></div>
+                <div class="rule-tip">
+                    💡 <strong>Tip:</strong> Press <strong>=</strong> or <strong>Enter</strong> after any calculation to get a fresh quote!
+                </div>
+                <div class="rule-tip">
+                    ⌨️ <strong>Keyboard:</strong> Use number keys, + - * /, Enter, Backspace, Esc
+                </div>
+            </div>
         </div>
     </div>
     
