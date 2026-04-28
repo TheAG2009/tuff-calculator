@@ -3,77 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>VibeCalc · Quote Generator Calculator</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>VibeCalc · Quote Calculator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <div class="app">
         <!-- Top Bar with Real Time & Info -->
         <div class="top-bar">
             <div class="real-time" id="realTime">--:--</div>
-            <div class="top-buttons">
-                <button class="info-btn" id="infoBtn">ⓘ</button>
-                <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
-            </div>
+            <button class="info-btn" id="infoBtn">ⓘ</button>
         </div>
         
-        <div class="phone-frame">
-            <div class="status-bar">
-                <span id="liveTime">9:41</span>
-                <span>📶 🔋</span>
-            </div>
-            
-            <div class="guideline-hint">
-                <span>➕💪 &nbsp; ➖💕 &nbsp; ➗😂 &nbsp; ✖️⚡ &nbsp; %🤔</span>
-                <button class="hint-icon" id="hintIconBtn">ⓘ</button>
-            </div>
-            
-            <!-- Quote Card - Shows the current quote -->
-            <div class="quote-card" id="quoteCard">
-                <div class="quote-icon" id="quoteIcon">💪</div>
-                <div class="quote-text-wrapper">
-                    <div class="quote-label" id="quoteLabel">READY</div>
-                    <div class="quote-text" id="quoteText">Tap numbers, press = to get a surprise!</div>
-                </div>
-            </div>
-            
-            <!-- Calculator Display - Will show QUOTES, not numbers! -->
+        <!-- Main Calculator Display - This shows QUOTES as answers! -->
+        <div class="display-container">
             <div class="calc-display">
                 <input type="text" id="display" readonly value="0" inputmode="none">
             </div>
-            
-            <!-- Button Grid -->
-            <div class="buttons-grid">
-                <button class="btn func" data-action="clear">AC</button>
-                <button class="btn func" data-action="toggleSign">+/−</button>
-                <button class="btn func" data-action="percent">%</button>
-                <button class="btn operator" data-op="÷">÷</button>
-                
-                <button class="btn num" data-num="7">7</button>
-                <button class="btn num" data-num="8">8</button>
-                <button class="btn num" data-num="9">9</button>
-                <button class="btn operator" data-op="×">×</button>
-                
-                <button class="btn num" data-num="4">4</button>
-                <button class="btn num" data-num="5">5</button>
-                <button class="btn num" data-num="6">6</button>
-                <button class="btn operator" data-op="-">−</button>
-                
-                <button class="btn num" data-num="1">1</button>
-                <button class="btn num" data-num="2">2</button>
-                <button class="btn num" data-num="3">3</button>
-                <button class="btn operator" data-op="+">+</button>
-                
-                <button class="btn num zero" data-num="0">0</button>
-                <button class="btn num" data-num=".">.</button>
-                <button class="btn equal" data-action="equals">=</button>
-            </div>
-            
-            <div class="home-bar"></div>
         </div>
+        
+        <!-- Button Grid - Large touch targets -->
+        <div class="buttons-grid">
+            <button class="btn func" data-action="clear">AC</button>
+            <button class="btn func" data-action="toggleSign">+/−</button>
+            <button class="btn func" data-action="percent">%</button>
+            <button class="btn operator" data-op="÷">÷</button>
+            
+            <button class="btn num" data-num="7">7</button>
+            <button class="btn num" data-num="8">8</button>
+            <button class="btn num" data-num="9">9</button>
+            <button class="btn operator" data-op="×">×</button>
+            
+            <button class="btn num" data-num="4">4</button>
+            <button class="btn num" data-num="5">5</button>
+            <button class="btn num" data-num="6">6</button>
+            <button class="btn operator" data-op="-">−</button>
+            
+            <button class="btn num" data-num="1">1</button>
+            <button class="btn num" data-num="2">2</button>
+            <button class="btn num" data-num="3">3</button>
+            <button class="btn operator" data-op="+">+</button>
+            
+            <button class="btn num zero" data-num="0">0</button>
+            <button class="btn num" data-num=".">.</button>
+            <button class="btn equal" data-action="equals">=</button>
+        </div>
+        
+        <div class="home-indicator"></div>
     </div>
     
-    <!-- Guideline Modal -->
+    <!-- Guideline Modal (shows when user taps ⓘ) -->
     <div class="modal" id="guidelineModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -83,32 +63,35 @@
             <div class="modal-body">
                 <div class="rule-item">
                     <span class="rule-op">+</span>
-                    <span class="rule-desc">→ 💪 Motivational Quote</span>
+                    <span class="rule-desc">→ Motivational Quote</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">-</span>
-                    <span class="rule-desc">→ 💕 Pick-up Line</span>
+                    <span class="rule-desc">→ Pick-up Line</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">÷</span>
-                    <span class="rule-desc">→ 😂 Funny Joke</span>
+                    <span class="rule-desc">→ Funny Joke</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">×</span>
-                    <span class="rule-desc">→ ⚡ Fun Task</span>
+                    <span class="rule-desc">→ Fun Task</span>
                 </div>
                 <div class="rule-item">
                     <span class="rule-op">%</span>
-                    <span class="rule-desc">→ 🤔 Deep Question</span>
+                    <span class="rule-desc">→ Deep Question</span>
                 </div>
                 <div class="rule-separator"></div>
                 <div class="rule-tip">
                     🎯 <strong>How it works:</strong><br>
                     Type any equation (like 2+2) and press <strong>=</strong><br>
-                    The DISPLAY shows a QUOTE instead of the answer!
+                    The display shows a QUOTE instead of the number answer!
                 </div>
                 <div class="rule-tip">
                     ⌨️ <strong>Keyboard:</strong> Use number keys, + - * /, Enter, Backspace
+                </div>
+                <div class="rule-tip">
+                    📱 <strong>Touch:</strong> Buttons are large and sensitive
                 </div>
             </div>
         </div>
