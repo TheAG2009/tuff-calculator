@@ -21,16 +21,62 @@ function updateRealTime() {
 updateRealTime();
 setInterval(updateRealTime, 1000);
 
-// Fullscreen for mobile
-function enterFullscreen() {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) elem.requestFullscreen();
-    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+// ========== WORKING FULLSCREEN FUNCTION ==========
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+let fullscreenIcon = true;
+
+function toggleFullscreen() {
+    const doc = document.documentElement;
+    
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        // Enter fullscreen
+        if (doc.requestFullscreen) {
+            doc.requestFullscreen();
+        } else if (doc.webkitRequestFullscreen) {
+            doc.webkitRequestFullscreen();
+        } else if (doc.msRequestFullscreen) {
+            doc.msRequestFullscreen();
+        }
+        fullscreenBtn.textContent = '✖';
+        fullscreenBtn.style.color = '#ff9f0a';
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        }
+        fullscreenBtn.textContent = '⛶';
+        fullscreenBtn.style.color = '#ff9f0a';
+    }
 }
 
+if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+}
+
+// Update button when fullscreen changes
+document.addEventListener('fullscreenchange', updateFullscreenIcon);
+document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
+
+function updateFullscreenIcon() {
+    if (fullscreenBtn) {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            fullscreenBtn.textContent = '✖';
+        } else {
+            fullscreenBtn.textContent = '⛶';
+        }
+    }
+}
+
+// Auto enter fullscreen on mobile load
 document.addEventListener('DOMContentLoaded', () => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) setTimeout(() => enterFullscreen(), 500);
+    if (isMobile) {
+        setTimeout(() => {
+            toggleFullscreen();
+        }, 300);
+    }
 });
 
 // Modal
@@ -99,7 +145,6 @@ function setOperation(op) {
     resetDisplay = true;
 }
 
-// 🔥 CORE: Show quote instead of answer!
 function showQuoteInsteadOfAnswer() {
     let quote;
     
@@ -142,7 +187,7 @@ window.addEventListener('keydown', (e) => {
     else if (key === '.') appendNumber('.');
     else if (key === '+' || key === '-' || key === '*' || key === '/') {
         e.preventDefault();
-        if (key === '*') setOperation('✕');
+        if (key === '*') setOperation('×');
         else if (key === '/') setOperation('÷');
         else setOperation(key);
     } else if (key === 'Enter' || key === '=') {
@@ -173,6 +218,3 @@ document.querySelector('[data-action="clear"]').onclick = clearAll;
 document.querySelector('[data-action="toggleSign"]').onclick = toggleSign;
 document.querySelector('[data-action="percent"]').onclick = handlePercent;
 document.querySelector('[data-action="equals"]').onclick = showQuoteInsteadOfAnswer;
-
-// Welcome message
-displayEl.value = "✨ Welcome! Type any equation and press = ✨";
