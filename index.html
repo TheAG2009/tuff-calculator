@@ -1,1 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>VibeCalc · iOS Calculator with Smart Quotes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="iphone">
+        <div class="iphone-notch"></div>
+        <div class="iphone-screen">
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📶 🔋 100%</span>
+            </div>
 
+            <!-- Guideline (Top Left) -->
+            <div class="guideline-bar">
+                <div class="guide-badge">
+                    <span>🎮</span> + 😤&nbsp;&nbsp;|&nbsp; - 💕&nbsp;&nbsp;|&nbsp; ÷ 😂&nbsp;&nbsp;|&nbsp; × 💪&nbsp;&nbsp;|&nbsp; % 🤔
+                </div>
+                <div class="guide-emojis">
+                    ✨ tap = vibe ✨
+                </div>
+            </div>
+
+            <!-- Calculator Display -->
+            <div class="calc-display">
+                <input type="text" id="display" readonly value="0" inputmode="none">
+            </div>
+
+            <!-- Quote Panel (Dynamic) -->
+            <div class="quote-card" id="quoteCard">
+                <div class="quote-icon" id="quoteIcon">💡</div>
+                <div class="quote-text-container">
+                    <div id="quoteText">⚡ Do any calculation → get a fun surprise ✨</div>
+                    <div class="quote-operation-badge" id="quoteTypeBadge">ready</div>
+                </div>
+            </div>
+
+            <!-- iOS Style Buttons -->
+            <div class="buttons-grid">
+                <button class="btn function clear-btn" data-action="clear">AC</button>
+                <button class="btn function" data-action="toggleSign">+/-</button>
+                <button class="btn function" data-action="percent">%</button>
+                <button class="btn operator" data-op="÷">÷</button>
+
+                <button class="btn number" data-num="7">7</button>
+                <button class="btn number" data-num="8">8</button>
+                <button class="btn number" data-num="9">9</button>
+                <button class="btn operator" data-op="×">×</button>
+
+                <button class="btn number" data-num="4">4</button>
+                <button class="btn number" data-num="5">5</button>
+                <button class="btn number" data-num="6">6</button>
+                <button class="btn operator" data-op="-">-</button>
+
+                <button class="btn number" data-num="1">1</button>
+                <button class="btn number" data-num="2">2</button>
+                <button class="btn number" data-num="3">3</button>
+                <button class="btn operator" data-op="+">+</button>
+
+                <button class="btn number zero" data-num="0">0</button>
+                <button class="btn number" data-num=".">.</button>
+                <button class="btn equal-btn" data-action="equals">=</button>
+            </div>
+            <div class="home-indicator"></div>
+        </div>
+    </div>
+
+    <script src="quotes.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
