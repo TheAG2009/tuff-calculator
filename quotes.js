@@ -1,9 +1,9 @@
 // ============================================
-// 🎯 PURE QUOTES - NO ANSWERS, NO EXTRA TEXT
-// Just motivational, funny, pick-up lines, tasks, deep questions
+// 🎯 QUOTES DATABASE - Easy to edit!
+// Just add your quotes inside the arrays
 // ============================================
 
-// ➕ ADD = MOTIVATION
+// ➕ ADD = MOTIVATIONAL QUOTES
 const motivationList = [
     "The harder you work, the luckier you get. Keep going!",
     "You don't have to be perfect to be amazing.",
@@ -16,8 +16,7 @@ const motivationList = [
     "Believe in yourself and you're halfway there!",
     "Great things never come from comfort zones.",
     "You are capable of amazing things.",
-    "Progress over perfection.",
-    "Today's you is tomorrow's inspiration."
+    "Progress over perfection."
 ];
 
 // ➖ SUBTRACT = PICK-UP LINES
@@ -31,9 +30,7 @@ const pickupList = [
     "If you were a number, you'd be 10 out of 10.",
     "You subtract my stress and multiply my happiness.",
     "Every minus without you feels like negative joy.",
-    "Do you have a name? Or can I call you mine?",
-    "You're the missing variable in my equation.",
-    "Is your name Google? Because you have everything I'm searching for."
+    "Do you have a name? Or can I call you mine?"
 ];
 
 // ➗ DIVIDE = FUNNY JOKES
@@ -47,12 +44,10 @@ const jokeList = [
     "What did the zero say to the eight? Nice belt!",
     "Why don't scientists trust atoms? Because they make up everything.",
     "What do you get when you cross a snowman and a vampire? Frostbite!",
-    "Why did the equal sign break up? It felt unequal in the relationship.",
-    "I asked Siri to divide my problems by zero... Now my phone is confused.",
-    "Why is 10 afraid of 7? Because 7 8 9, but 10 divided by 2 is 5-ever!"
+    "Why did the equal sign break up? It felt unequal in the relationship."
 ];
 
-// ✖️ MULTIPLY = TASKS / ACTIONS
+// ✖️ MULTIPLY = TASKS
 const taskList = [
     "Do 10 jumping jacks RIGHT NOW!",
     "Take 5 deep breaths. In... and out...",
@@ -63,12 +58,10 @@ const taskList = [
     "Close your eyes and count to 20 slowly!",
     "Hum your favorite song for 10 seconds!",
     "Smile at yourself in the mirror!",
-    "Say one nice thing about yourself right now!",
-    "Do 8 squats — get that energy flowing!",
-    "Compliment someone (or yourself) out loud!"
+    "Say one nice thing about yourself right now!"
 ];
 
-// ❓ PERCENT = DEEP / MEME QUESTIONS
+// ❓ PERCENT = DEEP QUESTIONS
 const questionList = [
     "If you're 10% smarter today than yesterday, what did you learn?",
     "What's one belief you held that turned out to be wrong?",
@@ -78,22 +71,13 @@ const questionList = [
     "What's the one thing you'd change about today if you could?",
     "What percentage of your potential are you actually using?",
     "Be honest: what's something you've been avoiding?",
-    "If life gave you 50% off coupon for anything, what would you buy?",
-    "What is 0% chance but you still hope for it often?",
-    "If confidence dropped by 15% today, how would you raise it?",
-    "If procrastination was 99%, what's the 1% you'd do anyway?"
+    "If life gave you 50% off coupon for anything, what would you buy?"
 ];
 
 // ============================================
 // TRACKING SYSTEM (no repeats in a row)
 // ============================================
-let lastUsed = {
-    '+': null,
-    '-': null,
-    '÷': null,
-    '×': null,
-    '%': null
-};
+let lastUsed = { '+': null, '-': null, '÷': null, '×': null, '%': null };
 
 function getUniqueItem(arr, typeKey) {
     if (!arr.length) return "✨ Keep going! ✨";
@@ -111,43 +95,13 @@ function getUniqueItem(arr, typeKey) {
     return candidate;
 }
 
-// Main function - returns ONLY quote text + label + icon
 function getQuoteByOp(op) {
-    let text = "";
-    let label = "";
-    let icon = "";
-    
     switch(op) {
-        case '+':
-            text = getUniqueItem(motivationList, '+');
-            label = "MOTIVATION";
-            icon = "💪";
-            break;
-        case '-':
-            text = getUniqueItem(pickupList, '-');
-            label = "PICK-UP LINE";
-            icon = "💕";
-            break;
-        case '÷':
-            text = getUniqueItem(jokeList, '÷');
-            label = "FUNNY JOKE";
-            icon = "😂";
-            break;
-        case '×':
-            text = getUniqueItem(taskList, '×');
-            label = "DO THIS";
-            icon = "⚡";
-            break;
-        case '%':
-            text = getUniqueItem(questionList, '%');
-            label = "DEEP QUESTION";
-            icon = "🤔";
-            break;
-        default:
-            text = "The harder you work, the luckier you get. Keep going!";
-            label = "MOTIVATION";
-            icon = "💪";
+        case '+': return getUniqueItem(motivationList, '+');
+        case '-': return getUniqueItem(pickupList, '-');
+        case '÷': return getUniqueItem(jokeList, '÷');
+        case '×': return getUniqueItem(taskList, '×');
+        case '%': return getUniqueItem(questionList, '%');
+        default: return getUniqueItem(motivationList, '+');
     }
-    
-    return { text, label, icon };
 }
