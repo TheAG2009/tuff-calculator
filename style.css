@@ -2,96 +2,124 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    user-select: none;
     -webkit-tap-highlight-color: transparent;
 }
 
 body {
-    background: radial-gradient(circle at 20% 30%, #1e2a3a, #0a0f14);
-    min-height: 100vh;
+    background: #000;
+    font-family: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, Helvetica, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+.app-container {
+    width: 100%;
+    height: 100%;
+    background: #000;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: -apple-system, 'SF Pro Text', 'Segoe UI', system-ui, Helvetica, sans-serif;
-    padding: 20px;
-}
-
-/* iPhone Bezel */
-.iphone {
-    width: 375px;
-    background: #000;
-    border-radius: 48px;
-    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.5), 0 0 0 6px #3a3d44, 0 0 0 12px #1a1c22;
     position: relative;
-    transition: transform 0.2s ease;
 }
 
-.iphone-notch {
-    width: 150px;
-    height: 28px;
-    background: #000;
-    position: absolute;
+/* Fullscreen button - clean & minimal */
+.fullscreen-btn {
+    position: fixed;
     top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 20px;
-    z-index: 10;
-    box-shadow: inset 0 0 0 1px #2e2e32;
+    right: 16px;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    font-size: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 30px;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
 }
 
-.iphone-screen {
+.fullscreen-btn:active {
+    background: rgba(255,255,255,0.3);
+    transform: scale(0.95);
+}
+
+/* Phone frame - optional, remove if you want pure fullscreen */
+.phone-frame {
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    max-height: 780px;
     background: #000;
-    border-radius: 44px;
-    overflow: hidden;
-    padding: 20px 12px 25px 12px;
     display: flex;
     flex-direction: column;
-    min-height: 700px;
+    padding: 16px 12px 20px 12px;
+    margin: auto;
 }
 
 /* Status Bar */
 .status-bar {
     display: flex;
     justify-content: space-between;
-    padding: 6px 8px 12px 8px;
-    font-size: 14px;
+    padding: 8px 6px 16px 6px;
+    font-size: 15px;
     font-weight: 590;
-    color: #f0f0f0;
+    color: #f5f5f5;
     background: transparent;
 }
 
-/* Guideline Bar */
-.guideline-bar {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-}
-
-.guide-badge {
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(10px);
-    padding: 6px 14px;
+/* Quote Card - Only quote, no answer text */
+.quote-card {
+    background: rgba(28, 28, 30, 0.85);
+    backdrop-filter: blur(20px);
     border-radius: 28px;
-    font-size: 12px;
-    font-weight: 500;
-    color: #ddd;
-    border: 0.5px solid rgba(255,255,255,0.2);
+    padding: 20px 18px;
+    margin: 8px 0 20px 0;
+    border: 0.5px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 14px;
+    transition: all 0.25s ease;
 }
 
-.guide-emojis {
-    font-size: 13px;
-    background: rgba(0,0,0,0.4);
-    padding: 5px 12px;
-    border-radius: 24px;
-    color: #ffd966;
+.quote-icon {
+    font-size: 42px;
+    background: rgba(255, 149, 0, 0.15);
+    width: 58px;
+    height: 58px;
+    border-radius: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quote-text-wrapper {
+    flex: 1;
+}
+
+.quote-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #ff9f0a;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.quote-text {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.4;
+    color: #ffffff;
 }
 
 /* Calculator Display */
 .calc-display {
-    background: #000;
-    padding: 20px 0 30px 0;
+    padding: 20px 0 16px 0;
     text-align: right;
 }
 
@@ -100,79 +128,13 @@ body {
     background: transparent;
     border: none;
     color: white;
-    font-size: 70px;
+    font-size: 68px;
     font-weight: 300;
     font-family: inherit;
     text-align: right;
-    padding: 0 8px;
+    padding: 0 6px;
     outline: none;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
-/* Quote Card with Animation */
-.quote-card {
-    background: rgba(30, 30, 35, 0.7);
-    backdrop-filter: blur(18px);
-    border-radius: 28px;
-    padding: 18px 16px;
-    margin: 12px 0 25px 0;
-    border: 0.5px solid rgba(255, 255, 255, 0.2);
-    min-height: 100px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.2s ease;
-}
-
-.quote-icon {
-    font-size: 36px;
-    background: rgba(255,255,240,0.1);
-    width: 52px;
-    height: 52px;
-    border-radius: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.quote-text-container {
-    flex: 1;
-}
-
-#quoteText {
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 1.4;
-    color: #f2f2f6;
-    margin-bottom: 6px;
-}
-
-.quote-operation-badge {
-    font-size: 11px;
-    color: #ff9f4a;
-    letter-spacing: 0.5px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-/* Quote Pop Animation */
-.quote-animate {
-    animation: quotePop 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
-}
-
-@keyframes quotePop {
-    0% {
-        opacity: 0;
-        transform: translateY(18px) scale(0.96);
-    }
-    80% {
-        transform: translateY(-2px) scale(1.01);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+    letter-spacing: -1px;
 }
 
 /* Button Grid */
@@ -180,53 +142,45 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-top: 8px;
+    margin-top: 12px;
 }
 
 .btn {
-    background: #2c2c2e;
     border: none;
     border-radius: 60px;
     padding: 18px 0;
     font-size: 32px;
     font-weight: 400;
-    color: white;
     font-family: inherit;
-    transition: all 0.08s linear;
+    transition: 0.05s linear;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    background: #2c2c2e;
+    color: white;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
 }
 
 .btn:active {
     transform: scale(0.94);
-    opacity: 0.7;
+    opacity: 0.75;
 }
 
 .operator {
     background: #ff9f0a;
-    color: white;
     font-size: 36px;
     font-weight: 500;
 }
 
-.function {
+.func {
     background: #50505c;
-    color: #fff;
     font-size: 28px;
 }
 
-.clear-btn {
-    background: #50505c;
-    color: #ff5e57;
-    font-weight: 600;
-}
-
-.equal-btn {
+.equal {
     background: #ff9f0a;
-    font-weight: 500;
+    font-size: 32px;
 }
 
 .zero {
@@ -235,14 +189,71 @@ body {
     padding-left: 32px;
 }
 
-.home-indicator {
+.home-bar {
     width: 130px;
     height: 5px;
-    background: #4a4a50;
+    background: #3a3a3e;
     border-radius: 100px;
-    margin: 20px auto 6px auto;
+    margin: 22px auto 8px auto;
 }
 
-#display {
-    scrollbar-width: none;
+/* Quote animation */
+.quote-pop {
+    animation: gentlePop 0.32s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+@keyframes gentlePop {
+    0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.97);
+    }
+    70% {
+        transform: translateY(-2px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Mobile fullscreen optimization */
+@media (max-width: 480px) {
+    .phone-frame {
+        max-width: 100%;
+        max-height: 100%;
+        padding: 12px 10px 16px 10px;
+    }
+    
+    .btn {
+        padding: 16px 0;
+        font-size: 30px;
+    }
+    
+    #display {
+        font-size: 58px;
+    }
+    
+    .quote-text {
+        font-size: 15px;
+    }
+    
+    .quote-icon {
+        font-size: 36px;
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* Landscape mode fix */
+@media (orientation: landscape) and (max-height: 500px) {
+    .phone-frame {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    
+    .quote-card {
+        margin: 0 0 8px 0;
+        padding: 12px;
+    }
 }
